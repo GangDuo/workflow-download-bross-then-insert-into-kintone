@@ -6,27 +6,21 @@ const puppeteer = require('puppeteer');
     const page = await browser.newPage();
   
     // Navigate the page to a URL
-    await page.goto('https://developer.chrome.com/');
+    await page.goto(process.env.URL);
   
     // Set screen size
     await page.setViewport({width: 1080, height: 1024});
   
-    // Type into search box
-    await page.type('.devsite-search-field', 'automate beyond recorder');
+    // アカウント入力ページへ移動する
+    await page.click('#site > table > tbody > tr > td:nth-child(2) > table > tbody > tr > td.sidenavibg > table:nth-child(1) > tbody > tr:nth-child(1) > td > a');
+    await page.waitForSelector('#reqCD');
   
-    // Wait and click on first result
-    const searchResultSelector = '.devsite-result-item-link';
-    await page.waitForSelector(searchResultSelector);
-    await page.click(searchResultSelector);
-  
-    // Locate the full title with a unique string
-    const textSelector = await page.waitForSelector(
-      'text/Customize and automate'
-    );
-    const fullTitle = await textSelector?.evaluate(el => el.textContent);
-  
-    // Print the full title
-    console.log('The title of this blog post is "%s".', fullTitle);
-  
+    await page.type('#reqCD', process.env.REQUEST_CODE);
+    await page.type('#userID', process.env.USER_ID);
+    await page.type('#password', process.env.PASSWORD);
+    // ログインボタンクリック
+    await page.click('#sousin');
+    
+    await page.screenshot({path: './screenshot.png'});
     await browser.close();
 })();
