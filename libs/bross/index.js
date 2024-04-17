@@ -21,6 +21,12 @@ const puppeteer = require('puppeteer');
     // ログインボタンクリック
     await page.click('#sousin');
     
+    await page.waitForSelector('#d2 > img');
+	await page.evaluate(_ => {
+		// 月次データダウンロード
+		document.querySelector('#d2 > img').click();
+	});
+
     await page.screenshot({path: './screenshot.png'});
     await browser.close();
 })();
