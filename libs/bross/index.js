@@ -33,6 +33,13 @@ const puppeteer = require('puppeteer');
 		document.querySelector('#mDataList2\\.dlFlg').click();
 	});
 
+    await page.waitForSelector('#sousin');
+	await page.evaluate(_ => {
+		// zipファイルをダウンロード
+		// idが複数定義されているため、getElementByIdは使えない
+		document.querySelectorAll('#sousin')[1].click();
+	});
+
     await page.screenshot({path: './screenshot.png'});
     await browser.close();
 })();
