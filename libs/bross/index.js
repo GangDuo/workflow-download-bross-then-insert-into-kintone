@@ -27,6 +27,12 @@ const puppeteer = require('puppeteer');
 		document.querySelector('#d2 > img').click();
 	});
 
+    await page.waitForSelector('#mDataList2\\.dlFlg');
+	await page.evaluate(_ => {
+		// 回線別請求内訳【コード付き】にチェック入れる
+		document.querySelector('#mDataList2\\.dlFlg').click();
+	});
+
     await page.screenshot({path: './screenshot.png'});
     await browser.close();
 })();
