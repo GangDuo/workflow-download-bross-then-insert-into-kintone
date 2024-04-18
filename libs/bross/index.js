@@ -1,6 +1,15 @@
 const puppeteer = require('puppeteer');
+const path = require('node:path');
+const fs = require('node:fs');
 
 (async () => {
+	const downloadPath = path.resolve(process.argv[2] ?? '.');
+	process.stdout.write(downloadPath)
+	if(!fs.existsSync(downloadPath)) {
+		process.stderr.write('有効なダウンロードパスを指定してください！')
+		return
+	}
+
     // Launch the browser and open a new blank page
     const browser = await puppeteer.launch();
     const page = await browser.newPage();
