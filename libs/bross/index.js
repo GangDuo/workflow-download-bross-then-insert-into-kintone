@@ -22,6 +22,24 @@ const fs = require('node:fs');
         downloadPath,
         eventsEnabled: true,
     });
+    const downloaded = new Promise((resolve, reject) => {
+        let suggestedFilename = '';
+        cdpSession.on(
+            "Browser.downloadProgress",
+            (params) => {
+                if (params.state == "completed") {
+                    resolve(suggestedFilename);
+                } else if (params.state == "canceled") {
+                    reject("download cancelled");
+                }
+            }
+        );
+        cdpSession.on(
+            "Browser.downloadWillBegin",
+            (params) => {
+                suggestedFilename = params.suggestedFilename
+            });
+    });
 
     // Navigate the page to a URL
     await page.goto(process.env.URL);
