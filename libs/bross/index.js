@@ -14,6 +14,15 @@ const fs = require('node:fs');
     const browser = await puppeteer.launch();
     const page = await browser.newPage();
   
+    // ダウンロードプロセスを監視する
+	// ファイルダウンロードの準備
+    const cdpSession = await page.createCDPSession()
+    await cdpSession.send('Browser.setDownloadBehavior', {
+        behavior: 'allow',
+        downloadPath,
+        eventsEnabled: true,
+    });
+
     // Navigate the page to a URL
     await page.goto(process.env.URL);
   
