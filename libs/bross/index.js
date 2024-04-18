@@ -2,6 +2,8 @@ const puppeteer = require('puppeteer');
 const path = require('node:path');
 const fs = require('node:fs');
 
+const DOWNLOAD_TIMEOUT = 60000;
+
 (async () => {
 	const downloadPath = path.resolve(process.argv[2] ?? '.');
 	process.stdout.write(downloadPath)
@@ -75,6 +77,22 @@ const fs = require('node:fs');
         // idが複数定義されているため、getElementByIdは使えない
         document.querySelectorAll('#sousin')[1].click();
     });
+
+    const controller = new AbortController();
+    await Promise.race([
+        downloaded,
+        new Promise((_resolve, reject) => {
+            const timeoutID = setTimeout(() => {
+                reject('download timed out');
+            }, DOWNLOAD_TIMEOUT);
+
+            controller.signal.addEventListener("abort", () => {
+                clearTimeout(timeoutID);
+                reject();
+            }, { once: true });
+        }),
+    ]);
+    controller.abort();
 
     await page.screenshot({path: './screenshot.png'});
     await browser.close();
