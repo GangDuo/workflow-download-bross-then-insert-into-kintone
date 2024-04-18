@@ -94,6 +94,5 @@ const DOWNLOAD_TIMEOUT = 60000;
     ]);
     controller.abort();
 
-    await page.screenshot({path: './screenshot.png'});
     await browser.close();
 })();
