@@ -1,6 +1,7 @@
 const path = require('node:path');
 const fs = require('node:fs');
 const { KintoneRestAPIClient } = require("@kintone/rest-api-client");
+const csv = require('csv');
 
 (async () => {
     const filePath = path.resolve(process.argv[2] ?? '.');
@@ -16,7 +17,11 @@ const { KintoneRestAPIClient } = require("@kintone/rest-api-client");
     }
 
     fs.createReadStream(filePath)
-      .pipe(process.stdout)
+        .pipe(csv.parse())
+        .pipe(csv.stringify({
+            quoted: true
+        }))
+        .pipe(process.stdout)
 
     const client = new KintoneRestAPIClient({
         baseUrl: process.env.BASE_URL,
