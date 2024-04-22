@@ -1,12 +1,12 @@
 const path = require('node:path');
-const fs = require('node:fs/promises');
+const fs = require('node:fs');
 const { KintoneRestAPIClient } = require("@kintone/rest-api-client");
 
 (async () => {
     const filePath = path.resolve(process.argv[2] ?? '.');
 	console.log(filePath)
     try {
-        const stats = await fs.stat(filePath)
+        const stats = await fs.promises.stat(filePath)
         if (!stats.isFile()) {
             throw new Error('ファイルを指定してください！')
         }
