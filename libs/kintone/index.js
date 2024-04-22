@@ -2,6 +2,7 @@ const path = require('node:path');
 const fs = require('node:fs');
 const { KintoneRestAPIClient } = require("@kintone/rest-api-client");
 const csv = require('csv');
+const iconv = require('iconv-lite');
 
 (async () => {
     const filePath = path.resolve(process.argv[2] ?? '.');
@@ -17,6 +18,7 @@ const csv = require('csv');
     }
 
     fs.createReadStream(filePath)
+        .pipe(iconv.decodeStream('Shift_JIS'))
         .pipe(csv.parse())
         .pipe(csv.stringify({
             quoted: true
