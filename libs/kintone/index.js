@@ -30,15 +30,14 @@ const iconv = require('iconv-lite');
         }, (err, result) => {
             console.dir(result);
             console.log(`結果取得: ${result.length}}`);
+            const client = new KintoneRestAPIClient({
+                baseUrl: process.env.BASE_URL,
+                auth: { apiToken: process.env.KINTONE_API_TOKEN },
+            });
+            console.dir(client);        
         }))
         .pipe(csv.stringify({
             quoted: true
         }))
         .pipe(process.stdout)
-
-    const client = new KintoneRestAPIClient({
-        baseUrl: process.env.BASE_URL,
-        auth: { apiToken: process.env.KINTONE_API_TOKEN },
-    });
-    console.dir(client);
 })();
