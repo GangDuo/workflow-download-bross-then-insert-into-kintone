@@ -34,7 +34,13 @@ const iconv = require('iconv-lite');
                 baseUrl: process.env.BASE_URL,
                 auth: { apiToken: process.env.KINTONE_API_TOKEN },
             });
-            console.dir(client);        
+
+            client.record.addAllRecords({
+                app: process.env.APP_ID,
+                records: result
+            })
+            .then(res => res.records.map(record => console.dir(JSON.stringify(record, null, ' '))))
+            .catch(reason => console.log(reason));
         }))
         .pipe(csv.stringify({
             quoted: true
