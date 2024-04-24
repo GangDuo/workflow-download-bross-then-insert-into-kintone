@@ -19,7 +19,7 @@ const iconv = require('iconv-lite');
 
     fs.createReadStream(filePath)
         .pipe(iconv.decodeStream('Shift_JIS'))
-        .pipe(csv.parse())
+        .pipe(csv.parse({from: 2}))
         .pipe(csv.transform((record) => {
             const requiredColumns = record.filter((clms, i) => [0, 1, 2, 4, 5, 7].includes(i));
             return requiredColumns.reduce((ax, clm, i) => {
@@ -30,15 +30,20 @@ const iconv = require('iconv-lite');
         }, (err, result) => {
             console.dir(result);
             console.log(`結果取得: ${result.length}}`);
+            const client = new KintoneRestAPIClient({
+                baseUrl: process.env.BASE_URL,
+                auth: { apiToken: process.env.KINTONE_API_TOKEN },
+            });
+
+            client.record.addAllRecords({
+                app: process.env.APP_ID,
+                records: result
+            })
+            .then(res => res.records.map(record => console.dir(JSON.stringify(record, null, ' '))))
+            .catch(reason => console.log(reason));
         }))
         .pipe(csv.stringify({
             quoted: true
         }))
         .pipe(process.stdout)
-
-    const client = new KintoneRestAPIClient({
-        baseUrl: process.env.BASE_URL,
-        auth: { apiToken: process.env.KINTONE_API_TOKEN },
-    });
-    console.dir(client);
 })();
