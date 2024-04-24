@@ -19,7 +19,7 @@ const iconv = require('iconv-lite');
 
     fs.createReadStream(filePath)
         .pipe(iconv.decodeStream('Shift_JIS'))
-        .pipe(csv.parse())
+        .pipe(csv.parse({from: 2}))
         .pipe(csv.transform((record) => {
             const requiredColumns = record.filter((clms, i) => [0, 1, 2, 4, 5, 7].includes(i));
             return requiredColumns.reduce((ax, clm, i) => {
