@@ -1,6 +1,6 @@
 const path = require('node:path');
 const fs = require('node:fs');
-const { KintoneRestAPIClient } = require("@kintone/rest-api-client");
+const { KintoneRestAPIClient, KintoneAllRecordsError } = require("@kintone/rest-api-client");
 const csv = require('csv');
 const iconv = require('iconv-lite');
 
@@ -37,6 +37,14 @@ const iconv = require('iconv-lite');
                 records: result
             })
             .then(res => res.records.map(record => console.dir(JSON.stringify(record, null, ' '))))
-            .catch(reason => console.log(reason));
+            .catch(reason => {
+                if (reason instanceof KintoneAllRecordsError) {
+                    // TODO:
+                    // 対応方法は2択。
+                    // 1. 登録データ processedRecordsResult を削除しロールバックする。
+                    // 2. 未登録データ reason.unprocessedRecords の登録リトライ。
+                    console.log('onKintoneAllRecordsError')
+                }
+            });
         }))
 })();
