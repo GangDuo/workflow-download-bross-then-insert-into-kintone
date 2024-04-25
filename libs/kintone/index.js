@@ -3,6 +3,7 @@ const fs = require('node:fs');
 const { KintoneRestAPIClient, KintoneAllRecordsError } = require("@kintone/rest-api-client");
 const csv = require('csv');
 const iconv = require('iconv-lite');
+const { Readable, Transform } = require('node:stream');
 
 (async () => {
     const filePath = path.resolve(process.argv[2] ?? '.');
@@ -43,7 +44,19 @@ const iconv = require('iconv-lite');
                     // 対応方法は2択。
                     // 1. 登録データ processedRecordsResult を削除しロールバックする。
                     // 2. 未登録データ reason.unprocessedRecords の登録リトライ。
-                    console.log('onKintoneAllRecordsError')
+                    Readable.from(reason.unprocessedRecords)
+                    .pipe(new Transform({
+                        transform(data, _encoding, callback) {
+                            const o = {};
+                            Object.keys(data).forEach(key => o[`${key}`] = data[key].value);
+                            this.push(o);
+                            callback();
+                        },
+                        objectMode: true,
+                    })).pipe(csv.stringify({
+                        quoted: true,
+                        header: true,
+                    })).pipe(process.stdout);
                 }
             });
         }))
