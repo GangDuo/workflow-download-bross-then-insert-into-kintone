@@ -6,7 +6,6 @@ const iconv = require('iconv-lite');
 
 (async () => {
     const filePath = path.resolve(process.argv[2] ?? '.');
-	console.log(filePath)
     try {
         const stats = await fs.promises.stat(filePath)
         if (!stats.isFile()) {
@@ -28,8 +27,6 @@ const iconv = require('iconv-lite');
                 return ax;
             }, { "請求先名": { value: "直営" }});
         }, (err, result) => {
-            console.dir(result);
-            console.log(`結果取得: ${result.length}}`);
             const client = new KintoneRestAPIClient({
                 baseUrl: process.env.BASE_URL,
                 auth: { apiToken: process.env.KINTONE_API_TOKEN },
@@ -42,8 +39,4 @@ const iconv = require('iconv-lite');
             .then(res => res.records.map(record => console.dir(JSON.stringify(record, null, ' '))))
             .catch(reason => console.log(reason));
         }))
-        .pipe(csv.stringify({
-            quoted: true
-        }))
-        .pipe(process.stdout)
 })();
