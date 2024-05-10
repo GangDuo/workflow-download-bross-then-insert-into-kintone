@@ -16,6 +16,7 @@ echo $tmp
 node .\..\libs\bross\index.js "$tmp"
 
 # ここに処理を記載する。
+Get-ChildItem "$tmp" -Filter "*.zip" | % { Expand-Archive -PassThru -Path $_.FullName -DestinationPath "$tmp" | % { echo $_.FullName } }
 
 $tmp | Remove-Item -Recurse
 
