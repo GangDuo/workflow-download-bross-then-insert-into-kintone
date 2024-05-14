@@ -16,7 +16,7 @@ echo $tmp
 node .\..\libs\bross\index.js "$tmp"
 
 # ここに処理を記載する。
-Get-ChildItem "$tmp" -Filter "*.zip" | % { Expand-Archive -PassThru -Path $_.FullName -DestinationPath "$tmp" | % { echo $_.FullName } }
+Get-ChildItem "$tmp" -Filter "*.zip" | % { Expand-Archive -PassThru -Path $_.FullName -DestinationPath "$tmp" | % { powershell -ExecutionPolicy Bypass .\sanitize.ps1 $_.FullName "$env:OUT_FILE" } }
 
 $tmp | Remove-Item -Recurse
 
